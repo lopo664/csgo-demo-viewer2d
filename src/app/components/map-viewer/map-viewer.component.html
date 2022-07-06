@@ -1,3 +1,9 @@
+<canvas [attr.width]="width" [attr.height]="height" style="position:absolute;" #canvas
+  (mousedown)="findxy('down', $event)"
+  (mousemove)="findxy('move', $event)"
+  (mouseup)="findxy('up', $event)"
+  (mouseout)="findxy('out', $event)"
+  (auxclick)="erase()"></canvas>
 <svg [attr.width]="width" [attr.height]="height" viewBox="0 0 100 100" (click)="onClick()">
     <defs>
         <filter id="shadow" width="1.5" height="1.5" x="-.25" y="-.25">
@@ -86,14 +92,14 @@
             state="dropped"></g>
         <g app-bomb-dp *ngFor="let bomb of gameState.bombPlanted"
             [x]="transformX(bomb.x)"
-            [y]="transformY(bomb.y)" 
+            [y]="transformY(bomb.y)"
             state="planted"></g>
     </g>
     <g>
         <ng-container *ngFor="let player of gameState.players">
             <g app-player *ngIf="player.isAlive"
-                [x]="transformX(player.x)"
-                [y]="transformY(player.y)"
+                [x]="transformX(player.x, player.z)"
+                [y]="transformY(player.y, player.z)"
                 [label]="(playerInfo[player.userId] || {}).no"
                 [yaw]="player.yaw"
                 [team]="player.team"
