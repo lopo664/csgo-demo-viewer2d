@@ -17,12 +17,12 @@
         .sidebar {
             min-width: 300px;
         }
-    
+
         .sidebar-content {
             display: flex;
             flex-direction: column;
         }
-    
+
         .top-toolbar {
             position: fixed;
             z-index: 100;
@@ -31,10 +31,9 @@
                 flex: 1;
             }
         }
-    
+
         .main-content {
             flex: 1;
-            margin-top: 64px;
             display: flex;
             flex-direction: column;
 
@@ -44,5 +43,5 @@
                 flex-direction: column;
             }
         }
-    }    
+    }
 }
