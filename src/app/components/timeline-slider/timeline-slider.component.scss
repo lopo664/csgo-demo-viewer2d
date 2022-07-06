@@ -49,22 +49,33 @@
                     cursor: pointer;
 
                     .marker-top {
-                        min-height: 10px;
-                        border-left: 2px solid mat-color($foreground, divider);
-
-                        &.passed {
-                            border-left: 2px solid mat-color($accent, 500);
-                        }
+                        min-height: 20px;
                     }
 
                     .marker-bot {
-                        min-height: 10px;
-                        border-left: 2px solid mat-color($foreground, divider);
-                        transform: translate(0px, 38px);
+                        min-height: 20px;
+                        transform: translate(0px, 28px);
+                    }
 
-                        &.passed {
-                            border-left: 2px solid mat-color($accent, 500);
-                        }
+                    .marker-mid {
+                        min-height: 12px;
+                        transform: translate(0px, -12px);
+                    }
+
+                    .border-green {
+                      border-left: 3px solid rgb(0, 255, 0);
+                    }
+
+                    .border-red {
+                      border-left: 3px solid rgb(255, 0, 0);
+                    }
+
+                    .border-blue {
+                      border-left: 3px solid rgb(0, 0, 255);
+                    }
+
+                    .border-white {
+                      border-left: 3px solid rgb(255, 255, 255);
                     }
 
                     .marker-text {

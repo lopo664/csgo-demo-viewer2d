@@ -2,15 +2,17 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChange
 
 export interface MarkerData {
   tick: number,
-  text: string,
-  position: 'bot' | 'top'
+  text?: string,
+  position: 'bot' | 'top' | 'mid',
+  color: 'white' | 'blue' | 'green' | 'red'
 }
 
 export interface MarkerPosition {
   tick: number,
-  text: string,
+  text?: string,
   x: number,
-  y: 'bot' | 'top'
+  y: 'bot' | 'top' | 'mid',
+  color: 'white' | 'blue' | 'green' | 'red'
 }
 
 @Component({
@@ -79,7 +81,8 @@ export class TimelineSliderComponent implements OnInit, OnChanges {
         tick: marker.tick,
         text: marker.text,
         x: this.getX(marker.tick) + 10,
-        y: marker.position
+        y: marker.position,
+        color: marker.color
       };
     });
   }

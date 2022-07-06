@@ -9,8 +9,8 @@
             <div class="timeline-marker" *ngFor="let marker of markerPositions"
                 [ngStyle]="{'transform': 'translate(' + marker.x + 'px, ' + (marker.y === 'bot' ? '-60px' : '0') + ')'}"
                 (click)="onMarkerClicked(marker)">
-                <div [ngClass]="'marker-' + marker.y" [class.passed]="value > marker.tick"></div>
-                <div class="marker-text" [class.passed]="value > marker.tick">{{marker.text}}</div>
+                <div [ngClass]="'marker-' + marker.y + ' border-' + marker.color" [class.passed]="value > marker.tick"></div>
+                <div *ngIf="marker.text" class="marker-text" [class.passed]="value > marker.tick">{{marker.text}}</div>
             </div>
         </div>
     </div>
