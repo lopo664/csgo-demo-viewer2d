@@ -63,7 +63,7 @@ export const mapCfg = {
             },
             "pxPerUX": 0.14376095926926907,
             "pxPerUY": -0.14736670935219626,
-            isVisible: (height: number) => height >= -450,
+            isVisible: (height: number) => height >= -480,
         },
         "low": {
             "origin": {
@@ -72,7 +72,7 @@ export const mapCfg = {
             },
             "pxPerUX": 0.1436068746398272,
             "pxPerUY": -0.14533406508526941,
-            isVisible: (height: number) => height < -450
+            isVisible: (height: number) => height < -480
         },
         imageWidth: 1024,
         imageHeight: 1024,
