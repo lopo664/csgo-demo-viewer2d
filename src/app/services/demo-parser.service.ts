@@ -44,8 +44,8 @@ export class DemoParserService {
   private storage: CsgoDemoFileWriter = null;
   public progressText: BehaviorSubject<string> = new BehaviorSubject<string>('Parsing demo ...');
   public parsing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public parsingProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0.0); 
-  
+  public parsingProgress: BehaviorSubject<number> = new BehaviorSubject<number>(0.0);
+
   private startTime: Date = null;
   private progressDone: number = 0.0;
 
@@ -100,6 +100,7 @@ export class DemoParserService {
         userId: player.userId,
         x: player.position.x,
         y: player.position.y,
+        z: player.position.z,
         yaw: player.eyeAngles.yaw,
         isAlive: player.isAlive,
         team: player?.team?.teamNumber,
@@ -145,7 +146,7 @@ export class DemoParserService {
 
   addGameState() {
     const getXY = (e: any) => {
-      return { x: e.x, y: e.y };
+      return { x: e.x, y: e.y, tick: e.tick };
     };
     let gameState: any = {
       tick: this.demofile.currentTick,
@@ -356,6 +357,8 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.smokes.push({
       index: e.entity.index,
+      team: e.entity.team.teamNumber,
+      tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
     });
@@ -369,6 +372,7 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.flashes.push({
       index: e.entity.index,
+      team: e.entity.team.teamNumber,
       tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
@@ -379,6 +383,7 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.heGrenades.push({
       index: e.entity.index,
+      team: e.entity.team.teamNumber,
       tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
@@ -388,6 +393,7 @@ export class DemoParserService {
   onInfernoBurn(e: any) {
     this.currentGameState.infernos.push({
       index: e.entityid,
+      tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
     });
@@ -401,6 +407,7 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.decoys.push({
       index: e.entityid,
+      team: e.entity.team.teamNumber,
       tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
@@ -429,15 +436,15 @@ export class DemoParserService {
 
       this.demofile = new DemoFile.DemoFile();
       this.storage = new CsgoDemoFileWriter();
-      
+
       this.parsing.next(true);
       this.parsingProgress.next(0.0);
-  
+
       this.demofile.entities.on('create', (e) => this.onPlayerJoined(e));
       this.demofile.entities.on('create', (e) => this.onTeamJoined(e));
       this.demofile.entities.on('create', (e) => this.onGrenadeAdded(e));
       this.demofile.entities.on('beforeremove', (e) => this.onGrenadeRemove(e));
-  
+
       this.demofile.gameEvents.on('round_start', (e) => this.onRoundStart(e));
       this.demofile.gameEvents.on('round_end', (e) => this.onRoundEnd(e));
       this.demofile.gameEvents.on('round_officially_ended', (e) => this.onRoundOfficiallyEnd(e));
@@ -446,41 +453,41 @@ export class DemoParserService {
       this.demofile.gameEvents.on('bomb_pickup', (e) => this.onBombPickup(e));
       this.demofile.gameEvents.on('player_death', (e) => this.onPlayerDeath(e));
       this.demofile.gameEvents.on('bomb_planted', (e) => this.onBombPlanted(e));
-  
+
       this.demofile.gameEvents.on('smokegrenade_detonate', (e) => this.onSmokeDetonate(e));
       this.demofile.gameEvents.on('flashbang_detonate', (e) => this.onFlashDetonate(e));
       this.demofile.gameEvents.on('hegrenade_detonate', (e) => this.onHEDetonate(e));
       this.demofile.gameEvents.on('inferno_startburn', (e) => this.onInfernoBurn(e));
-  
+
       this.demofile.gameEvents.on('inferno_expire', (e) => this.onInfernoExpire(e));
       this.demofile.gameEvents.on('smokegrenade_expired', (e) => this.onSmokeExpire(e));
       this.demofile.gameEvents.on('decoy_detonate', (e) => this.onDecoyDetonate(e));
-  
+
       this.demofile.on('tickend', (tick) => this.onTickEnd(tick));
       this.demofile.on('progress', (e) => {
         this.progressDone = e;
         this.parsingProgress.next(e * 100);
       });
-  
+
       this.demofile.parse(buffer);
-  
+
       return new Promise<any>((res, rej) => {
         this.demofile.on('end', (e) => {
           this.progressDone = 0.0;
           this.parsingProgress.next(100);
           this.parsing.next(false);
-  
+
           if (e.error) {
             return rej(e.error);
           }
-  
+
           this.rollRound();
-  
+
           this.matchInfo.mapName = this.demofile.header.mapName;
           this.matchInfo.serverName = this.demofile.header.serverName;
           this.matchInfo.tickRate = this.demofile.tickRate;
           this.storage.saveMatchInfo(this.matchInfo);
-  
+
           return res(this.storage);
         });
       });

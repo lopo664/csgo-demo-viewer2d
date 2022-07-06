@@ -9,10 +9,14 @@
 
     .demoviewer {
         padding: 10px;
-        
+
         .demo-player {
             display: flex;
             flex-direction: column;
+
+            .round-buttons {
+              text-align: center;
+            }
 
             .player-buttons {
                 display: flex;
@@ -31,7 +35,6 @@
                 .round-text {
                     margin: auto;
                 }
-
             }
 
             .map-details {
@@ -49,10 +52,6 @@
                 .team-card {
                     padding: 20px;
                     margin-top: 50px;
-                }
-
-                .round-info-header {
-                    padding: 10px 20px;
                 }
 
                 .round-info {

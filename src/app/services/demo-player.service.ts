@@ -23,8 +23,8 @@ export class DemoPlayerService {
   private tempPath: string = '';
 
   constructor() {
-    this.tempPath = path.join(electronRemote.app.getPath('temp'), 
-      'csgo-demo-viewer2d');
+    this.tempPath = path ? path.join(electronRemote.app.getPath('temp'), 
+      'csgo-demo-viewer2d') : 'D:\\Usuarios\\lopo\\Downloads\\csgo-demo-viewer2d';
     console.log(this.tempPath);
   }
 

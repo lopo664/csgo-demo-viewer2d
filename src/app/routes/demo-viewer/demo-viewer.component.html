@@ -1,58 +1,68 @@
 <div class="demo-player">
-    <div class="player-buttons" *ngIf="demoLoaded">
-        <mat-form-field [disabled]="roundLoading" [style.width.px]="50">
-            <mat-label>Round</mat-label>
-            <mat-select [(ngModel)]="round" (ngModelChange)="onRoundChanged()">
-                <mat-option *ngFor="let round of rounds" [value]="round">{{round+1}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button mat-icon-button [disabled]="roundLoading" (click)="onPreviousRound()"><mat-icon>skip_previous</mat-icon></button>
-        <button mat-icon-button [disabled]="roundLoading" (click)="onNextRound()"><mat-icon>skip_next</mat-icon></button>
-        <button mat-icon-button [disabled]="roundLoading" (click)="onPlayPause()"><mat-icon>{{intervalId != null ? 'pause' : 'play_arrow'}}</mat-icon></button>
-        <!-- <mat-slider class="round-progress" [disabled]="roundLoading" [min]="slider.min" [max]="slider.max" [step]="slider.step" [(ngModel)]="currentIndex"></mat-slider> -->
-        <app-timeline-slider class="round-progress" [markers]="markers" [min]="slider.min" [max]="slider.max" [(value)]="currentIndex"></app-timeline-slider>
-        <!-- <button mat-flat-button (click)="onZoomReset()">Zoom Reset</button> -->
-        <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_verts</mat-icon></button>
-
-        <!-- <button mat-flat-button (click)="onSaveDemo()" aria-label="Save demo for fast retrival next time">Save Demo</button> -->
-        <!-- <button mat-flat-button routerLink="/">Load Another Demo</button> -->
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="onSaveDemo()">Save Demo</button>
-            <button mat-menu-item routerLink="/">Load Another Demo</button>
-        </mat-menu>
-    </div>
     <div class="map-details" *ngIf="demoLoaded">
         <div class="round-info-header">
-            <app-map-header-info [matchInfo]="matchInfo" 
-                [roundInfo]="roundInfo" 
+            <app-map-header-info [matchInfo]="matchInfo"
+                [roundInfo]="roundInfo"
                 [currentGameState]="CurrentGameState"
                 [round]="round">
             </app-map-header-info>
         </div>
         <div class="round-info">
             <div class="team-card map-t-info">
-                <app-player-info-card *ngFor="let player of TPlayers" 
-                    [playerInfo]="getPlayerInfo(player.userId)" 
+                <app-player-info-card *ngFor="let player of TPlayers"
+                    [playerInfo]="getPlayerInfo(player.userId)"
                     [playerState]="player" blockAlign="left">
                 </app-player-info-card>
             </div>
             <div class="spacer"></div>
-            <!-- <app-demo-viewer-canvas #demoViewer 
-                [mapName]="matchInfo.mapName" 
+            <!-- <app-demo-viewer-canvas #demoViewer
+                [mapName]="matchInfo.mapName"
                 [gameState]="CurrentGameState"
                 [playerInfo]="matchInfo.playerInfo"></app-demo-viewer-canvas> -->
-            <app-map-viewer 
+            <app-map-viewer
                 [mapName]="matchInfo.mapName"
                 [gameState]="CurrentGameState"
                 [playerInfo]="matchInfo.playerInfo"></app-map-viewer>
             <div class="spacer"></div>
             <div class="team-card map-ct-info">
-                <app-player-info-card *ngFor="let player of CTPlayers" 
-                    [playerInfo]="getPlayerInfo(player.userId)" 
+                <app-player-info-card *ngFor="let player of CTPlayers"
+                    [playerInfo]="getPlayerInfo(player.userId)"
                     [playerState]="player" blockAlign="right">
                 </app-player-info-card>
             </div>
         </div>
+    </div>
+    <div class="round-buttons">
+      <button mat-icon-button [disabled]="roundLoading" (click)="onPreviousRound()"><mat-icon>skip_previous</mat-icon></button>
+      <button mat-icon-button [disabled]="roundLoading" (click)="onNextRound()"><mat-icon>skip_next</mat-icon></button>
+      <button mat-icon-button [disabled]="roundLoading" (click)="onPlayPause()"><mat-icon>{{intervalId != null ? 'pause' : 'play_arrow'}}</mat-icon></button>
+      <button mat-icon-button [disabled]="roundLoading" (click)="onSlower()"><mat-icon>fast_rewind</mat-icon></button>
+      <button mat-icon-button [disabled]="roundLoading" (click)="onFaster()" style="margin-right: 20px;"><mat-icon>fast_forward</mat-icon></button>
+      <mat-button-toggle-group name="freezetime" aria-label="Freezetime" multiple>
+        <mat-button-toggle [disabled]="roundLoading" (click)="onToggleFreeze()">Freezetime</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <button mat-icon-button [disabled]="roundLoading" *ngFor="let round of rounds" (click)="onRoundChanged(round)">{{round+1}}</button>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu" style="margin-left: 20px;"><mat-icon>more_verts</mat-icon></button>
+      <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="onSaveDemo()">Save Demo</button>
+          <button mat-menu-item routerLink="/">Load Another Demo</button>
+      </mat-menu>
+    </div>
+    <div class="player-buttons" *ngIf="demoLoaded">
+        <!-- <mat-form-field [disabled]="roundLoading" [style.width.px]="50">
+            <mat-label>Round</mat-label>
+            <mat-select [(ngModel)]="round" (ngModelChange)="onRoundChanged()">
+                <mat-option *ngFor="let round of rounds" [value]="round">{{round+1}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+        <!-- <mat-slider class="round-progress" [disabled]="roundLoading" [min]="slider.min" [max]="slider.max" [step]="slider.step" [(ngModel)]="currentIndex"></mat-slider> -->
+        <app-timeline-slider class="round-progress" [markers]="markers" [min]="slider.min" [max]="slider.max" [(value)]="currentIndex"></app-timeline-slider>
+        <!-- <button mat-flat-button (click)="onZoomReset()">Zoom Reset</button> -->
+
+        <!-- <button mat-flat-button (click)="onSaveDemo()" aria-label="Save demo for fast retrival next time">Save Demo</button> -->
+        <!-- <button mat-flat-button routerLink="/">Load Another Demo</button> -->
     </div>
 </div>
 

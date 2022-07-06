@@ -49,10 +49,13 @@ export class DemoViewerComponent implements OnInit {
   private gameStates: any[] = [];
   public currentIndex: number = 0;
   public markers: MarkerData[] = [
-    {tick: 0, text: 'start'}
+    {tick: 0, text: 'start', position: 'bot'}
   ];
 
   public intervalId;
+  public demoSpeed = 1;
+  public freezeEnd = 0;
+  public skipFreezetime = false;
 
   public slider: any = {
     min: 0,
@@ -79,7 +82,8 @@ export class DemoViewerComponent implements OnInit {
     this.loadRoundInfo();
   }
 
-  onRoundChanged() {
+  onRoundChanged(round: number) {
+    this.round = round;
     this.stopPlaying();
     this.loadRoundInfo();
   }
@@ -111,8 +115,8 @@ export class DemoViewerComponent implements OnInit {
       this.roundLoading = false;
       this.roundLoaded = true;
       this.gameStates = states;
-      this.currentIndex = 0;
       this.resetSlider();
+      this.currentIndex = this.skipFreezetime ? this.freezeEnd : 0;
     });
   }
 
@@ -133,6 +137,19 @@ export class DemoViewerComponent implements OnInit {
     }
   }
 
+  onFaster() {
+    this.stopPlaying();
+    this.demoSpeed = this.demoSpeed * 2;
+    console.log(this.demoSpeed);
+    this.startPlaying();
+  }
+
+  onSlower() {
+    this.stopPlaying();
+    this.demoSpeed = this.demoSpeed / 2;
+    this.startPlaying();
+  }
+
   resetSlider() {
     this.slider.min = 0;
     this.slider.max = this.gameStates.length;
@@ -143,10 +160,10 @@ export class DemoViewerComponent implements OnInit {
     this.markers = [];
 
     this.markers.push({
-      tick: 0, text: 'Start'
+      tick: 0, text: 'Start', position: 'bot'
     });
     this.markers.push({
-      tick: this.gameStates.length-1, text: 'End'
+      tick: this.gameStates.length-1, text: 'End', position: 'bot'
     })
     let freezeAdded = false;
     let bombPlantAdded = false;
@@ -156,25 +173,69 @@ export class DemoViewerComponent implements OnInit {
       let gameState = this.gameStates[i];
       if(!freezeAdded && gameState.tick > this.roundInfo.freezeEndTick) {
         this.markers.push({
-          tick: i, text: 'Go Go Go'
+          tick: i, text: 'Go Go Go', position: 'bot'
         });
+        this.freezeEnd = i;
         freezeAdded = true;
       }
-      if(this.roundInfo.bombPlantTick != 0 && !bombPlantAdded && 
+      if(this.roundInfo.bombPlantTick != 0 && !bombPlantAdded &&
         gameState.tick > this.roundInfo.bombPlantTick) {
         this.markers.push({
-          tick:i, text: 'Bomb Planted'
+          tick:i, text: 'Bomb Planted', position: 'bot'
         });
         bombPlantAdded = true;
       }
       if(!winnerAdded && gameState.tick > this.roundInfo.roundEndTick) {
         this.markers.push({
-          tick: i, text: (this.roundInfo.winner == 2 ? 'T Won': 'CT Won')
+          tick: i, text: (this.roundInfo.winner == 2 ? 'T Won': 'CT Won'), position: 'bot'
         });
         winnerAdded = true;
       }
-
-      if(freezeAdded &&  bombPlantAdded && winnerAdded) break;
+      if(gameState.heGrenades.length > 0) {
+        for(let k = 0; k < gameState.heGrenades.length; k++) {
+          if(gameState.tick === (gameState.heGrenades[k].tick + (4 - gameState.heGrenades[k].tick % 4))) {
+            this.markers.push({
+              tick: i, text: 'HE', position: gameState.heGrenades[k].team === 3 ? 'bot' : 'top'
+            });
+          }
+        }
+      }
+      if(gameState.flashes.length > 0) {
+        for(let k = 0; k < gameState.flashes.length; k++) {
+          if(gameState.tick === (gameState.flashes[k].tick + (4 - gameState.flashes[k].tick % 4))) {
+            this.markers.push({
+              tick: i, text: 'FL', position: gameState.flashes[k].team === 3 ? 'bot' : 'top'
+            });
+          }
+        }
+      }
+      if(gameState.decoys.length > 0) {
+        for(let k = 0; k < gameState.decoys.length; k++) {
+          if(gameState.tick === (gameState.decoys[k].tick + (4 - gameState.decoys[k].tick % 4))) {
+            this.markers.push({
+              tick: i, text: 'DE', position: gameState.decoys[k].team === 3 ? 'bot' : 'top'
+            });
+          }
+        }
+      }
+      if(gameState.infernos.length > 0) {
+        for(let k = 0; k < gameState.infernos.length; k++) {
+          if(gameState.tick === (gameState.infernos[k].tick + (4 - gameState.infernos[k].tick % 4))) {
+            this.markers.push({
+              tick: i, text: 'MO', position: 'bot'
+            });
+          }
+        }
+      }
+      if(gameState.smokes.length > 0) {
+        for(let k = 0; k < gameState.smokes.length; k++) {
+          if(gameState.tick === (gameState.smokes[k].tick + (4 - gameState.smokes[k].tick % 4))) {
+            this.markers.push({
+              tick: i, text: 'SM', position: gameState.smokes[k].team === 3 ? 'bot' : 'top'
+            });
+          }
+        }
+      }
     }
   }
 
@@ -183,7 +244,7 @@ export class DemoViewerComponent implements OnInit {
     let maxRounds = this.matchInfo.roundInfo.length;
     if(this.round < maxRounds-1) {
       ++this.round;
-      this.currentIndex = 0;
+      this.currentIndex = this.skipFreezetime ? this.freezeEnd : 0;
     }
     return this.loadRoundInfo();
   }
@@ -192,9 +253,13 @@ export class DemoViewerComponent implements OnInit {
     if(stopPlaying) this.stopPlaying();
     if(this.round > 0) {
       --this.round;
-      this.currentIndex = 0;
+      this.currentIndex = this.skipFreezetime ? this.freezeEnd : 0;
     }
     return this.loadRoundInfo();
+  }
+
+  onToggleFreeze() {
+    this.skipFreezetime = !this.skipFreezetime;
   }
 
   startPlaying() {
@@ -202,7 +267,7 @@ export class DemoViewerComponent implements OnInit {
       if(this.currentIndex >= this.gameStates.length) {
         this.onNextRound(false);
       }
-      this.currentIndex += 1;
+      this.currentIndex += this.demoSpeed;
     }, 31.25);
   }
 
@@ -261,5 +326,9 @@ export class DemoViewerComponent implements OnInit {
 
   onSaveDemo() {
     this.demoPlayer.saveCurrentLoadedDemo();
+  }
+
+  onKeydown(event) {
+    console.log(event.key);
   }
 }
