@@ -6,10 +6,10 @@
             <div class="slider-completed" [class.focused]="focused" [ngStyle]="{'width': getCompletedValue() + 'px'}"></div>
         </div>
         <div class="timeline-markers">
-            <div class="timeline-marker" *ngFor="let marker of markerPositions" 
-                [ngStyle]="{'transform': 'translate(' + marker.x + 'px, 0)'}"
+            <div class="timeline-marker" *ngFor="let marker of markerPositions"
+                [ngStyle]="{'transform': 'translate(' + marker.x + 'px, ' + (marker.y === 'bot' ? '-60px' : '0') + ')'}"
                 (click)="onMarkerClicked(marker)">
-                <div class="marker-top" [class.passed]="value > marker.tick"></div>
+                <div [ngClass]="'marker-' + marker.y" [class.passed]="value > marker.tick"></div>
                 <div class="marker-text" [class.passed]="value > marker.tick">{{marker.text}}</div>
             </div>
         </div>

@@ -2,13 +2,15 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChange
 
 export interface MarkerData {
   tick: number,
-  text: string
+  text: string,
+  position: 'bot' | 'top'
 }
 
 export interface MarkerPosition {
   tick: number,
   text: string,
-  x: number
+  x: number,
+  y: 'bot' | 'top'
 }
 
 @Component({
@@ -76,7 +78,8 @@ export class TimelineSliderComponent implements OnInit, OnChanges {
       return {
         tick: marker.tick,
         text: marker.text,
-        x: this.getX(marker.tick) + 10
+        x: this.getX(marker.tick) + 10,
+        y: marker.position
       };
     });
   }
