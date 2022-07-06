@@ -59,7 +59,7 @@ export class MapViewerComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.ctx = this.canvas.nativeElement.getContext('2d');
+    //this.ctx = this.canvas.nativeElement.getContext('2d');
   }
 
   transformX(x, z) {
