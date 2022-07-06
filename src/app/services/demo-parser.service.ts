@@ -146,7 +146,7 @@ export class DemoParserService {
 
   addGameState() {
     const getXY = (e: any) => {
-      return { x: e.x, y: e.y, tick: e.tick };
+      return { x: e.x, y: e.y, tick: e.tick, team: e.team };
     };
     let gameState: any = {
       tick: this.demofile.currentTick,
@@ -357,7 +357,7 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.smokes.push({
       index: e.entity.index,
-      team: e.entity.team.teamNumber,
+      team: e.player.team.teamNumber,
       tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
@@ -372,7 +372,7 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.flashes.push({
       index: e.entity.index,
-      team: e.entity.team.teamNumber,
+      team: e.player.team.teamNumber,
       tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
@@ -383,7 +383,7 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.heGrenades.push({
       index: e.entity.index,
-      team: e.entity.team.teamNumber,
+      team: e.player.team.teamNumber,
       tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
@@ -407,7 +407,7 @@ export class DemoParserService {
     this.removeNadeHavingIndex(e.entity.index);
     this.currentGameState.decoys.push({
       index: e.entityid,
-      team: e.entity.team.teamNumber,
+      team: e.player.team.teamNumber,
       tick: this.demofile.currentTick,
       x: e.x,
       y: e.y
